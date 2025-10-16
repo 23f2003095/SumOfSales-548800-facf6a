@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sales Summary 659</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  h1 { font-size: 1.5em; }
+  #total-sales { font-weight: bold; font-size: 1.2em; }
+</style>
+</head>
+<body>
+<h1>Sales Summary 659</h1>
+<p>Total sales (category &le; 29): <span id="total-sales">Loading...</span></p>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('attachments/sales.csv')
+      .then(response => response.text())
+      .then(csvText => {
+        let total = 0;
+        const lines = csvText.trim().split('\n');
+        // Assuming first line is header
+        const headers = lines[0].split(',');
+        const categoryIdx = headers.indexOf('category');
+        const salesIdx = headers.indexOf('sales');
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(',');
+          const category = parseFloat(cols[categoryIdx]);
+          const sales = parseFloat(cols[salesIdx]);
+          if (category <= 29 && !isNaN(sales)) {
+            total += sales;
+          }
+        }
+        document.getElementById('total-sales').textContent = total.toFixed(2);
+      })
+      .catch(error => {
+        document.getElementById('total-sales').textContent = 'Error loading data';
+        console.error('Error fetching CSV:', error);
+      });
+  });
+</script>
+</body>
+</html>
